@@ -1,0 +1,284 @@
+<html>
+  <head>
+    <title>Administración de Usuarios Ceytauro</title>
+    <link rel="stylesheet" href="../CSS/styleUsersManagement.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Administración de Usuarios CeyTauro</h1>
+    <button id="addUser" class="btn btn-add">Agregar Usuario</button>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>UserName</th>
+          <th>Email</th>
+          <th>Password</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>  
+      <tbody id="usersBody">        
+    </tbody>   
+    </table>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script>    
+    const API_URL_Read = 'http://127.0.0.1:5000/api/usuarios/api/users_read/999999999';
+    const API_URL_Create = 'http://127.0.0.1:5000/api/usuarios/api/users_create';
+    const API_URL_Update = 'http://127.0.0.1:5000/api/usuarios/api/update_user';
+    const API_URL_Delete = 'http://127.0.0.1:5000/api/usuarios/delete_user';
+
+    const userTable = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+    const addUserBtn = document.getElementById('addUser');
+
+
+  function saveNewUser() 
+  {
+    const username = document.getElementById('newUsername');
+    const email = document.getElementById('newEmail');
+    const password = document.getElementById('newPassword');      
+    let isValid = true;
+    if (username.value.trim() === '') {
+      username.classList.add('error');
+      isValid = false;
+    } else {
+      username.classList.remove('error');
+    }
+    if (email.value.trim() === '' || !validateEmail(email.value)) {
+      email.classList.add('error');
+      isValid = false;
+    } else {
+      email.classList.remove('error');
+    }
+    if (password.value.length < 8) {
+      password.classList.add('error');
+      isValid = false;
+    } else {
+      password.classList.remove('error');
+    }
+    if (!isValid) {
+      alert('Por favor, complete todos los campos correctamente.');
+      return;
+    }
+    const newUser = {
+      username: username.value,
+      email: email.value,
+      password: password.value
+    };
+
+    axios.post(API_URL_Create, newUser)
+      .then(response => {
+        alert('Usuario agregado exitosamente.');
+        location.reload(); // Recargar la página para mostrar el nuevo usuario
+      })
+      .catch(error => {
+        console.error('Error al agregar el usuario:', error);
+      });
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+  }
+
+    function getAllUsers() {
+      return axios.get(API_URL);
+    }
+    // Agregar un nuevo usuario
+    function addUser(user) {
+      return axios.post(API_URL, user);
+    }
+    // Editar un usuario existente
+    function editUser(id, user) {
+      return axios.put(`${API_URL_Update}/${id}`, user);
+    }    
+    function delUser(id) {
+      return axios.delete(`${API_URL_Delete}/${id}`);
+    }    
+    
+    function verUsuarios() {
+    fetch(API_URL_Read)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al obtener los usuarios: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.message) {
+                showUsers(data.message);
+            } else {
+                console.error('Respuesta inesperada del servidor:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud fetch:', error);
+        });
+}
+
+function showUsers(users) {            
+    userTable.innerHTML = '';            
+    users.forEach(usuario => {
+        let row = document.createElement('tr');
+        
+        let idCell = document.createElement('td');
+        idCell.textContent = usuario.id_usuario; // Asegúrate de usar el nombre correcto del campo
+        row.appendChild(idCell);
+        
+        let usernameCell = document.createElement('td');
+        usernameCell.textContent = usuario.username;
+        row.appendChild(usernameCell);
+        
+        let emailCell = document.createElement('td');
+        emailCell.textContent = usuario.email;
+        row.appendChild(emailCell);
+        
+        // Crear la celda de contraseña
+        let passwordCell = document.createElement('td');
+        passwordCell.innerHTML = `
+            <span class="password-mask">**********</span>
+            <input type="hidden" class="password-real" value="${usuario.password}" />
+        `;
+        row.appendChild(passwordCell);
+        
+        let actionsCell = document.createElement('td');
+        actionsCell.innerHTML = `
+            <button class="btn btn-edit" onclick="editUser(${usuario.id_usuario})">Editar</button>
+            <button class="btn btn-save hidden" onclick="saveUser(${usuario.id_usuario})">Guardar</button>
+            <button class="btn btn-Delete hidden" onclick="delUser(${usuario.id_usuario})">Eliminar</button>
+        `;
+        row.appendChild(actionsCell);
+
+        usersBody.appendChild(row);
+    });
+}
+
+
+    
+    //function agregarUsuario() {
+     // const fullName = document.
+     document.addEventListener("DOMContentLoaded", verUsuarios());
+  
+ 
+    addUserBtn.addEventListener('click', () => {
+      let row = document.createElement('tr');          
+      row.innerHTML = `
+        <td class="hidden"></td>
+        <td><text="text" id="id" placeholder="identi"></td>
+        <td><input type="text" id="newUsername" placeholder="UserName"></td>
+        <td><input type="email" id="newEmail" placeholder="Email"></td>
+        <td><input type="password" id="newPassword" placeholder="Password"></td>
+        <td>
+          <button class="btn btn-save" onclick="saveNewUser()">Guardar</button>
+        </td>
+      `;
+      
+      userTable.appendChild(row);
+      addUserBtn.disabled = true;
+  });
+
+  function editUser(id) {
+  const row = event.target.closest('tr');
+  const cells = row.cells;
+  const passwordCell = row.cells[3];
+  
+  // Verificar si existe .password-real, o tomar contenido actual
+  const passwordRealInput = passwordCell.querySelector('.password-real');
+  const passwordValue = passwordRealInput ? passwordRealInput.value : '********';
+  
+  // Reemplazar contenido de la celda con un input
+  passwordCell.innerHTML = `<input type="text" value="${passwordValue}" />`;
+  
+  cells[0].contentEditable = true;
+  cells[1].contentEditable = true;
+  cells[2].contentEditable = true;
+  cells[0].classList.add('editable');
+  cells[1].classList.add('editable');
+  cells[2].classList.add('editable');
+  cells[3].classList.add('editable');
+  
+  // Ocultar botón editar, mostrar guardar y eliminar
+  const actionsCell = cells[4];
+  actionsCell.querySelector('.btn-edit').classList.add('hidden');
+  actionsCell.querySelector('.btn-save').classList.remove('hidden');
+  actionsCell.querySelector('.btn-delete').classList.remove('hidden');
+}
+  function delUser(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+      axios.delete(`${API_URL_Delete}/${id}`)
+            .then(response => {
+                console.log('Usuario eliminado:', response.data);
+                alert('Usuario eliminado exitosamente.');
+                location.reload(); // Actualiza la lista de usuarios
+            })
+            .catch(error => {
+                const errorMsg = error.response ? error.response.data.error : error.message;
+                console.error('Error al eliminar el usuario:', errorMsg);
+                alert('Error al eliminar el usuario: ' + errorMsg);
+            });
+    }
+}
+
+
+function saveUser(id) {
+    const row = event.target.closest('tr');
+    const cells = row.cells;
+
+    // Obtener valores de las celdas
+    const updatedUser = {
+        id: id,
+        username: cells[1].textContent.trim(),
+        email: cells[2].textContent.trim(),
+        password: cells[3].querySelector('input') ? cells[3].querySelector('input').value.trim() : ''
+    };
+
+    // Validar campos obligatorios
+    if (!updatedUser.username || !updatedUser.email || !updatedUser.password) {
+        alert('Todos los campos son obligatorios');
+        return;
+    }
+
+    // Enviar solicitud PUT
+    axios.put('http://127.0.0.1:5000/api/usuarios/api/update_user', updatedUser, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Usuario actualizado:', response.data);
+
+        // Ajustar la fila después de guardar
+        cells[0].contentEditable = false;
+        cells[1].contentEditable = false;
+        cells[2].contentEditable = false;
+        cells[3].innerHTML = `
+            <span class="password-mask">**********</span>
+            <input type="hidden" value="${updatedUser.password}" class="password-real" />
+        `;
+        cells[0].classList.remove('editable');
+        cells[1].classList.remove('editable');
+        cells[2].classList.remove('editable');
+        cells[3].classList.remove('editable');
+        cells[4].querySelector('.btn-edit').classList.remove('hidden');
+        cells[4].querySelector('.btn-save').classList.add('hidden');
+        cells[4].querySelector('.btn-delete').classList.add('hidden');
+
+        alert('Usuario actualizado exitosamente.');
+    })
+    .catch(error => {
+        console.error('Error al actualizar el usuario:', error.response ? error.response.data : error.message);
+        alert('Hubo un error al intentar actualizar el usuario: ' + (error.response ? error.response.data.error : error.message));
+    });
+} 
+    addUserBtn.addEventListener('click', () => {
+      const newUser = {
+        id: exampleUsers.length + 1,
+        fullName: 'Nuevo',
+        email: 'nuevo@ejemplo.com',
+        password: '********'
+      };      
+    });
+  </script>
+</body>
+</html>

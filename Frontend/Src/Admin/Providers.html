@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos de Cocina</title>
+    <link rel="stylesheet" href="../CSS/Provider.css">
+</head>
+<body>
+    
+    <header>
+        <h1>Gestión de Proveedores</h1>
+        <input type="text" id="searchBar" placeholder="Buscar proveedor...">
+    </header>
+    
+    <main>
+        <section id="productForm">
+            <h2>Agregar/Editar Proveedor</h2>
+            <form id="form">
+                <input type="hidden" id="codeproveedor">
+                <input type="text" id="providerName" name="nombre" placeholder="Nombre contacto" required>
+                <input type="text" id="providerRazon" name="razon" placeholder="Razon Social" required>
+                <input type="number" id="ProviderNit_CC" name="nit_proveedor" placeholder="Nit/CC" required>
+                <input type="text" id="ProviderTel" name="telefono" placeholder="Telefono" required>
+                <input type="email" id="providerEmail" name="correo_electronico" placeholder="Correo electronico">
+                <input type="text" id="providerAddress" name="direccion" placeholder="direccion">
+                <button type="submit" id="submitButton">Guardar</button>
+            </form>
+            
+        </section>
+
+        <section id="productList">
+            <h2>Lista de Proveedores</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre Contacto</th>
+                        <th>Razon Social</th>
+                        <th>Nit</th>
+                        <th>Telefono</th>
+                        <th>Email</th>
+                        <th>Direccion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody"></tbody>
+            </table>
+        </section>
+        <div id="pagination"></div>
+    </main>
+
+    <script src="../JavaScripts/scriptProviders.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>

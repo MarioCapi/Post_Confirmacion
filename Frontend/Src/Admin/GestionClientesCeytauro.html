@@ -1,0 +1,72 @@
+<html>
+    <head>
+    <base href="." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Clientes CeyTauro
+    </title>
+    <link href="../CSS/GestionClientesCeyTauro.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Sistema de Gestión de Clientes</h1>
+    </div>
+
+    <div class="card">
+        <form id="clientForm">
+            <input type="hidden" id="clientId">
+            <div class="form-group">
+                <label for="name" class="required">Nombre/Razón Social</label>
+                <input type="text" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="identification" class="required">Número de Identificación</label>
+                <input type="text" id="identification" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email" class="required">Correo Electrónico</label>
+                <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="shippingAddress">Dirección de Envío</label>
+                <input type="text" id="shippingAddress" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="billingAddress">Dirección de Facturación</label>
+                <input type="text" id="billingAddress" class="form-control">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <table class="clients-table">
+            <thead>
+                <tr>
+                    <th>Nombre/Razón Social</th>
+                    <th>Identificación</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="notification" class="notification"></div>
+
+
+<script src="../JavaScripts/GestionClientes.js"></script>
+</body>
+</html>

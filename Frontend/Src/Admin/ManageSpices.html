@@ -1,0 +1,123 @@
+<html lang="es">
+    <head>
+        <html lang="es">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario CeyTauro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../CSS/manageSpices.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-mortar-pestle me-2"></i>Gestión de Especias</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <!-- Formulario de ingreso -->
+            <div class="col-md-4">
+                <div class="card animate-fade">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0"><i class="fas fa-plus-circle me-2"></i>Nueva Especia</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="spiceForm">
+                            <div class="mb-3">
+                                <label for="nombre_especia" class="form-label">Nombre de la Especia</label>
+                                <input type="text" class="form-control" id="nombre_especia" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cantidad" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="cantidad" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="unidad_medida" class="form-label">Unidad de Medida</label>
+                                <select class="form-select" id="unidad_medida" required>
+                                    <option value="kg">Kilogramos</option>
+                                    <option value="g">Gramos</option>
+                                    <option value="lb">Libras</option>
+                                    <option value="oz">Onzas</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                                <input type="date" class="form-control" id="fecha_ingreso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="proveedor" class="form-label">Proveedor</label>
+                                <input type="text" class="form-control" id="proveedor" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="precio_compra" class="form-label">Precio de Compra</label>
+                                <input type="number" class="form-control" id="precio_compra" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ubicacion" class="form-label">Ubicación</label>
+                                <input type="text" class="form-control" id="ubicacion" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="notas" class="form-label">Notas Adicionales</label>
+                                <textarea class="form-control" id="notas" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Guardar Especia</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de especias -->
+            <div class="col-md-8">
+                <div class="card animate-fade">
+                    <div class="card-header bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>Inventario de Especias</h5>
+                            <input type="text" class="form-control form-control-sm w-auto" id="searchInput" placeholder="Buscar especia...">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Proveedor</th>
+                                        <th>Precio</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="spiceList">
+                                    <!-- Los datos se cargarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar especia -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Especia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario de edición similar al de ingreso -->
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JavaScripts/ManageSpices.js"></script>
+    
+</body>
+</html>
