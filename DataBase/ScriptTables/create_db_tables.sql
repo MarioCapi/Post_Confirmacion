@@ -69,3 +69,24 @@ CREATE TABLE "management".inscripciones_campamento (
     observaciones TEXT,
     FOREIGN KEY (ahijado_id) REFERENCES management.ahijados(id) ON DELETE CASCADE
 );
+
+-- 1. Crear la tabla "grupos"
+CREATE TABLE "management".grupos (
+    id SERIAL PRIMARY KEY,
+    numero_grupo INT NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    padrino_1 INT NOT NULL, -- Relación con la tabla "padrinos"
+    padrino_2 INT NOT NULL, -- Relación con la tabla "padrinos"
+    FOREIGN KEY (padrino_1) REFERENCES "management".padrinos(id) ON DELETE CASCADE,
+    FOREIGN KEY (padrino_2) REFERENCES "management".padrinos(id) ON DELETE CASCADE
+);
+
+-- 2. Crear la tabla intermedia "grupos_ahijados"
+CREATE TABLE "management".grupos_ahijados (
+    id SERIAL PRIMARY KEY,
+    grupo_id INT NOT NULL, -- Relación con la tabla "grupos"
+    ahijado_id INT NOT NULL, -- Relación con la tabla "ahijados"
+    FOREIGN KEY (grupo_id) REFERENCES "management".grupos(id) ON DELETE CASCADE,
+    FOREIGN KEY (ahijado_id) REFERENCES "management".ahijados(id) ON DELETE CASCADE,
+    UNIQUE (grupo_id, ahijado_id) -- Evitar duplicados
+);
