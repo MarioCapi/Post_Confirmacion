@@ -1,82 +1,71 @@
 --Crear base de datos
-CREATE DATABASE "CeyTauro";
+CREATE DATABASE "Post_Confirmacion";
 --crear equema "Management"
 CREATE SCHEMA "management";
 
+-- Crear el schema "management" si no existe
+CREATE SCHEMA IF NOT EXISTS management;
+
+-- Cambiar al schema "management"
+SET search_path TO management;
+
 --crear tablas
-CREATE TABLE "management".usuarios (
+CREATE TABLE "management".users (
     id_usuario SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE management.productos 
-(id_producto SERIAL PRIMARY KEY,
-codeProducto VARCHAR NOT NULL,
-nombre_producto VARCHAR(255) NOT NULL,
-unidad_de_medida VARCHAR(10) NOT NULL,
-descripcion TEXT, 
-precio_unitario DECIMAL(10, 2));
-ALTER TABLE management.productos
-ADD CONSTRAINT unique_codeProducto UNIQUE (codeProducto);
-
-
-
-CREATE TABLE management.clientes (
+-- 3. Crear la tabla "padrinos" (primera tabla sin dependencias)
+CREATE TABLE "management".padrinos (
     id SERIAL PRIMARY KEY,
-    nombre_razonsocial VARCHAR(200) NOT NULL,
-    numero_identificacion VARCHAR(50) UNIQUE NOT NULL,
-    correo_electronico VARCHAR(100) UNIQUE NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    tipo_documento VARCHAR(50) NOT NULL,
+    numero_documento VARCHAR(50) NOT NULL UNIQUE,
+    edad INT NOT NULL,
     telefono VARCHAR(20),
-    direccion_envio TEXT,
-    direccion_facturacion TEXT,
-    fecha_creacion TIMESTAMP DEFAULT NOW()
+    email VARCHAR(100),
+    fecha_nacimiento DATE NOT NULL
 );
 
--- Table: management.inventario-- DROP TABLE IF EXISTS management.inventario;
-CREATE TABLE IF NOT EXISTS management.inventario
-(
-    id serial primary key,
-    nombre_especia character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    cantidad integer NOT NULL,
-    unidad_medida character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    fecha_ingreso date NOT NULL,
-    proveedor character varying(100) COLLATE pg_catalog."default",
-    precio_compra numeric(10,2),
-    ubicacion character varying(100) COLLATE pg_catalog."default",
-    notas text COLLATE pg_catalog."default"    
-)
-
-
-CREATE TABLE management.ventas (
-    id_venta 				SERIAL PRIMARY KEY, 
-	consecutivo_factura		bigint NOT NULL,    
-	numero_identi_cliente	VARCHAR(20),
-    id_producto 			INT NOT NULL,
-    cantidad 				INT NOT NULL CHECK (cantidad > 0),
-	total 					DECIMAL(15, 2),
-    estado              	VARCHAR(20),
-    estado_formapago    	VARCHAR(20),
-    fecha_venta 			TIMESTAMP DEFAULT NOW(),
-	
-    
-    CONSTRAINT fk_cliente FOREIGN KEY (numero_identi_cliente) 
-        REFERENCES management.clientes (numero_identificacion) 
-        ON DELETE RESTRICT ON UPDATE CASCADE,
-    
-    CONSTRAINT fk_producto FOREIGN KEY (id_producto) 
-        REFERENCES management.productos (id_producto) 
-        ON DELETE RESTRICT ON UPDATE CASCADE
+-- 4. Crear la tabla "curso" (segunda tabla sin dependencias)
+CREATE TABLE "management".curso (
+    id SERIAL PRIMARY KEY,
+    descripcion VARCHAR(200) NOT NULL,
+    fecha_inicio DATE NOT NULL
 );
 
-CREATE TABLE "management".proveedores (
-    id_proveedor SERIAL PRIMARY KEY,            
-    nit_proveedor BIGINT NOT NULL UNIQUE,       
-    nombre_contacto VARCHAR(255) NOT NULL,      
-    razon_social VARCHAR(255) NOT NULL,         
-    telefono_contacto VARCHAR(50),             
-    direccion VARCHAR(255),                    
-    correo_electronico VARCHAR(255)            
+-- 5. Crear la tabla "ahijados" (depende de "padrinos" y "curso")
+CREATE TABLE "management".ahijados (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    tipo_documento VARCHAR(50) NOT NULL,
+    numero_documento VARCHAR(50) NOT NULL UNIQUE,
+    edad INT NOT NULL,
+    telefono VARCHAR(20),
+    email VARCHAR(100),
+    fecha_nacimiento DATE NOT NULL,
+    curso_id INT, -- Relación con la tabla "curso"
+    padrino_id INT, -- Relación con la tabla "padrinos"
+    FOREIGN KEY (curso_id) REFERENCES management.curso(id) ON DELETE SET NULL,
+    FOREIGN KEY (padrino_id) REFERENCES management.padrinos(id) ON DELETE SET NULL
 );
 
+-- 6. Crear la tabla "campamento" (sin dependencias)
+CREATE TABLE "management".campamento (
+    id SERIAL PRIMARY KEY,
+    descripcion VARCHAR(200) NOT NULL,
+    año INT NOT NULL
+);
+
+-- 7. Crear la tabla "inscripciones_campamento" (depende de "ahijados")
+CREATE TABLE "management".inscripciones_campamento (
+    id SERIAL PRIMARY KEY,
+    ahijado_id INT NOT NULL, -- Relación con la tabla "ahijados"
+    abono NUMERIC(10, 2) NOT NULL,
+    observaciones TEXT,
+    FOREIGN KEY (ahijado_id) REFERENCES management.ahijados(id) ON DELETE CASCADE
+);
